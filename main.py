@@ -1,35 +1,35 @@
+# Минимальный вес остова
+
 import csv
-from array import array
 
 INF = 10 ** 9
-N = 4
-number = 0
+N = 10
+number = 4
+prev = [None] * N
 with open("data.txt") as f:
     data = [list(map(int, row)) for row in csv.reader(f, delimiter=' ')]
 
-R = [(data[column][row], row + 1, column + 1) for row in range(4) for column in range(4) if data[column][row] != 0]
+R = [(data[column][row], row, column) for row in range(10) for column in range(10) if data[column][row] != 0]
 
 W = {(r[1], r[2]): r[0] for r in R}
-print(W)
 
-path = [[] for i in range(N)]
+F = [INF] * N
+F[number] = 0
+for k in range(1, N):
+    for j, i in W.keys():
+        if F[j] + W[j, i] < F[i]:
+            F[i] = F[j] + W[j, i]
+            prev[i] = j
 
-while number < N:
-    F = [INF] * N
-    F[number] = 0
-    for k in range(1, N):
-        path[k].append(number+1)
-        for j, i in W.keys():
-            print(f"{j}\t{i}\t{F[j-1]}\t{F[i-1]}")
-            if F[j - 1] + W[j, i] < F[i - 1]:
-                print("true")
-                F[i - 1] = F[j - 1] + W[j, i]
-                path[i-1].append(i)
-                path[i - 1].append(j)
-                print(path)
-    print(path)
-    print(F)
-    number+=1
+for n in range(N):
+    path = []
+    j = n
+    while j is not None:
+        if prev[j] is not None:
+            path.append(prev[j])
+        j = prev[j]
 
+    path.reverse()
+    path.append(n)
+    print(f"Путь из вершины 4 в вершину {n}: {path}, вес пути {F[n]}")
 
-[0, 8, 4, 3, 0, 10, 1, 7, 0, 0, 7, 0, 0, 0, 0, 6, 0]
